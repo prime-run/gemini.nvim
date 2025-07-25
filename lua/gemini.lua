@@ -38,7 +38,7 @@ M.get_context_string = function(opts)
     return nil, "No buffer name"
   end
 
-  local relative_path = vim.fn.fnamemodify(file_path, ":.")
+  local context_path = vim.fn.fnamemodify(file_path, ":p")
   local selection_range = ""
 
   if use_range then
@@ -52,7 +52,7 @@ M.get_context_string = function(opts)
     end
   end
 
-  return string.format("@%s%s", relative_path, selection_range)
+  return string.format("@%s%s", context_path, selection_range)
 end
 
 -- Echoes the context string.
@@ -78,7 +78,7 @@ M.parse_context = function(context_string)
     return nil, "Could not parse file path"
   end
 
-  local file_name = vim.fn.fnamemodify(file_match, ":t")
+  local file_name = vim.fn.fnamemodify(file_match, ":.")
   local parsed_string = "@" .. file_name
 
   if range_match then
@@ -109,6 +109,34 @@ M.ask_and_parse = function(opts)
   local final_string = input_text .. parsed_string
   -- Use print() to add a newline, as requested.
   print(final_string)
+end
+
+M.GeminiAsk = function()
+  -- Automatically detect if a visual selection was made.
+  local start_line = vim.fn.line("'<")
+  local use_range = start_line ~= 0
+
+  vim.ui.input({ prompt = "Ask Gemini: " }, function(input)
+    if not input or input == "" then
+      vim.notify("GeminiAsk cancelled.", vim.log.levels.INFO)
+      return
+    end
+
+    local context_string, err = M.get_context_string({ use_range = use_range })
+    if err then
+      vim.notify(err, vim.log.levels.WARN)
+      return
+    end
+
+    local parsed_string, parse_err = M.parse_context(context_string)
+    if parse_err then
+      vim.notify(parse_err, vim.log.levels.ERROR)
+      return
+    end
+
+    local final_string = input .. " " .. parsed_string
+    M.open({ cmd = { "gemini", "-i", final_string } })
+  end)
 end
 
 return M

@@ -11,25 +11,19 @@ function M.open(opts)
   local width_percentage = tonumber(opts.width) or 25
   local width = math.floor(vim.o.columns * (width_percentage / 100))
 
-  -- 2. Get CWD from current buffer's relative path
-  local file_path = vim.api.nvim_buf_get_name(0)
-  local cwd
-  if file_path and file_path ~= "" then
-    -- Get the directory of the current file, relative to the main CWD
-    cwd = vim.fn.fnamemodify(file_path, ":h")
-  end
-
-  -- Fallback to current working directory if buffer has no file or path is not a directory
-  if not cwd or cwd == "" or vim.fn.isdirectory(cwd) == 0 then
-    cwd = vim.fn.getcwd()
-  end
+  -- 2. Get CWD from neovim's current working directory
+  local cwd = vim.fn.getcwd()
 
   -- 3. Get command to run
   local cmd_to_run = ""
-  if opts.cmd and opts.cmd ~= "" then
+  if opts.cmd then
     if type(opts.cmd) == "table" then
-      cmd_to_run = table.concat(opts.cmd, " ")
-    elseif type(opts.cmd) == "string" then
+      local parts = {}
+      for _, part in ipairs(opts.cmd) do
+        table.insert(parts, vim.fn.shellescape(part))
+      end
+      cmd_to_run = table.concat(parts, " ")
+    elseif type(opts.cmd) == "string" and opts.cmd ~= "" then
       cmd_to_run = opts.cmd
     end
   end
@@ -42,13 +36,9 @@ function M.open(opts)
   vim.cmd("lcd " .. vim.fn.fnameescape(cwd))
 
   -- 6. Open the terminal in the new split.
-  local term_cmd
+  local term_cmd = "terminal"
   if cmd_to_run ~= "" then
-    local shell = vim.o.shell
-    local escaped_cmd = vim.fn.string(cmd_to_run):gsub('"', '"')
-    term_cmd = string.format('terminal %s -c "%s; exec %s"', shell, escaped_cmd, shell)
-  else
-    term_cmd = "terminal"
+    term_cmd = term_cmd .. " " .. cmd_to_run
   end
   vim.api.nvim_command(term_cmd)
 
@@ -63,6 +53,7 @@ function M.open(opts)
 
   vim.cmd("startinsert")
 end
+
 
 return M
 
