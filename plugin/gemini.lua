@@ -18,3 +18,12 @@ vim.api.nvim_create_user_command("Gemini", function(cmd_opts)
   require("gemini").open(opts)
 end, { nargs = "*", complete = "file" })
 
+vim.api.nvim_create_user_command("GeminiAsk", function()
+  local mode = vim.fn.mode(1)
+  local cmdline = vim.fn.getcmdline()
+
+  -- Use range if called from visual mode, or if an explicit range was provided.
+  local use_range = (mode == "cv") or (cmdline ~= "GeminiAsk" and cmdline ~= "GeminiAsk!")
+  require("gemini").ask({ use_range = use_range })
+end, { nargs = 0, range = true, bang = true })
+

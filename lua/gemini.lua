@@ -28,4 +28,34 @@ M.open = function(opts)
   module.open(merged_opts)
 end
 
+-- Get the visual selection, or the whole file, and format it as a string.
+M.ask = function(opts)
+  opts = opts or {}
+  local use_range = opts.use_range
+
+  local file_path = vim.api.nvim_buf_get_name(0)
+  if file_path == "" then
+    vim.notify("No buffer name", vim.log.levels.WARN)
+    return
+  end
+
+  local relative_path = vim.fn.fnamemodify(file_path, ":.")
+  local selection_range = ""
+
+  if use_range then
+    local start_line = vim.fn.line("'<")
+    local start_col = vim.fn.col("'<")
+    local end_line = vim.fn.line("'>")
+    local end_col = vim.fn.col("'>")
+
+    -- Check if the mark is valid before formatting
+    if start_line ~= 0 and end_line ~= 0 then
+      selection_range = string.format(" L%dC%d-L%dC%d", start_line, start_col, end_line, end_col)
+    end
+  end
+
+  local output = string.format("@%s%s", relative_path, selection_range)
+  vim.api.nvim_echo({ { output, "Normal" } }, false, {})
+end
+
 return M

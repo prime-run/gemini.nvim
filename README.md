@@ -75,6 +75,17 @@ You can override the configured settings by passing arguments to the command.
 - `:Gemini lazygit`: Opens a terminal with your configured width and runs `lazygit`.
 - `:Gemini 40 lazygit`: Opens a terminal with 40% width and runs `lazygit`.
 
+### GeminiAsk Command
+
+The `:GeminiAsk` command is designed to capture the context of your current buffer or visual selection.
+
+- **With a visual selection**: It will echo the relative file path along with the start and end coordinates of your selection.
+  - Example output: `@src/main.lua L10C5-L20C15`
+- **Without a visual selection**: It will echo the relative file path of the current buffer.
+  - Example output: `@src/main.lua`
+
+`:GeminiAsk`
+
 ### Lua function
 
 You can also override settings when calling the Lua function directly. This is useful for keymaps.
