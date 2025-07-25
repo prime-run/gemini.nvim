@@ -4,9 +4,11 @@ local module = require("gemini.module")
 ---@class Config
 ---@field width number|string The percentage of the screen width the terminal should take (e.g., 25).
 ---@field cmd string|table|nil The command to execute upon opening.
+---@field focus_back boolean Whether to focus back on the original window after opening the terminal.
 local config = {
   width = 25,
   cmd = nil,
+  focus_back = true,
 }
 
 ---@class Gemini
