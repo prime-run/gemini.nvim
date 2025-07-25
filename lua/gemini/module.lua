@@ -11,10 +11,16 @@ function M.open(opts)
   local width_percentage = tonumber(opts.width) or 25
   local width = math.floor(vim.o.columns * (width_percentage / 100))
 
-  -- 2. Get CWD from current buffer
-  local cwd = vim.fn.expand("%:p:h")
+  -- 2. Get CWD from current buffer's relative path
+  local file_path = vim.api.nvim_buf_get_name(0)
+  local cwd
+  if file_path and file_path ~= "" then
+    -- Get the directory of the current file, relative to the main CWD
+    cwd = vim.fn.fnamemodify(file_path, ":h")
+  end
+
   -- Fallback to current working directory if buffer has no file or path is not a directory
-  if cwd == "" or vim.fn.isdirectory(cwd) == 0 then
+  if not cwd or cwd == "" or vim.fn.isdirectory(cwd) == 0 then
     cwd = vim.fn.getcwd()
   end
 
