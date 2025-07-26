@@ -254,6 +254,7 @@ function M.switch_focus()
     else
       -- Focus the terminal
       vim.api.nvim_set_current_win(winid)
+      vim.cmd("startinsert")
     end
   else
     vim.notify("Gemini terminal is not visible.", vim.log.levels.INFO)
