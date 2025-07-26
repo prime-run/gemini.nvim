@@ -4,11 +4,34 @@ local module = require("gemini.module")
 ---@class Config
 ---@field width number|string The percentage of the screen width the terminal should take (e.g., 25).
 ---@field cmd string|table|nil The command to execute upon opening.
+---@class TerminalOpts
+---@field width number The width of the terminal window.
+---@field position 'left'|'right'|'top'|'bottom' The position of the terminal window.
+
+---@class KeymapOpts
+---@field gemini_ask string|false Mapping for the interactive ask function.
+---@field gemini_open string|false Mapping for the bare open function.
+---@field toggle_gemini string|false Mapping for toggling the terminal window.
+---@field switch_focus string|false Mapping for switching focus to the terminal.
+
+---@class Config
+---@field cmd string|table|nil The command to execute upon opening.
 ---@field focus_back boolean Whether to focus back on the original window after opening the terminal.
+---@field terminal TerminalOpts Styling options for the terminal window.
+---@field keymaps KeymapOpts Mappings for plugin actions.
 local config = {
-  width = 25,
   cmd = nil,
   focus_back = true,
+  terminal = {
+    width = 30,
+    position = "right",
+  },
+  keymaps = {
+    gemini_ask = "<leader>ga",
+    gemini_open = false,
+    toggle_gemini = "<leader>gt",
+    switch_focus = "<leader>gf",
+  },
 }
 
 ---@class Gemini
@@ -21,6 +44,20 @@ M.config = config
 ---@param args Config?
 M.setup = function(args)
   M.config = vim.tbl_deep_extend("force", M.config, args or {})
+
+  local keymaps = M.config.keymaps
+  if keymaps.gemini_ask then
+    vim.keymap.set({ "n", "v" }, keymaps.gemini_ask, M.GeminiAsk, { desc = "Ask Gemini" })
+  end
+  if keymaps.gemini_open then
+    vim.keymap.set("n", keymaps.gemini_open, M.open, { desc = "Open Gemini" })
+  end
+  if keymaps.toggle_gemini then
+    vim.keymap.set({ "n", "i" }, keymaps.toggle_gemini, module.toggle, { desc = "Toggle Gemini" })
+  end
+  if keymaps.switch_focus then
+    vim.keymap.set({ "n", "i" }, keymaps.switch_focus, module.switch_focus, { desc = "Switch Focus" })
+  end
 end
 
 -- This is the function that users will call.

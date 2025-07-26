@@ -61,12 +61,22 @@ The plugin comes with the following default configuration, which you can overrid
 
 >
     require("gemini").setup({
-      -- The percentage of the screen width the terminal should take (e.g., 25).
-      width = 25,
       -- The command to execute upon opening. Can be a string or a table.
       cmd = nil,
       -- Whether to focus back on the original window after opening the terminal.
       focus_back = true,
+      -- Styling options for the terminal window.
+      terminal = {
+        width = 30,
+        position = "right", -- Can be 'left', 'right', 'top', or 'bottom'
+      },
+      -- Keymappings for plugin actions. Set to `false` to disable a mapping.
+      keymaps = {
+        gemini_ask = "<leader>ga",
+        gemini_open = false,
+        toggle_gemini = "<leader>gt",
+        switch_focus = "<leader>gf",
+      },
     })
 <
 
@@ -76,19 +86,34 @@ Here is a more detailed example:
 
 >
     require("gemini").setup({
-      width = 40,
       cmd = { "gemini", "--arg1" },
       focus_back = false,
+      terminal = {
+        width = 40,
+        position = "left",
+      },
+      keymaps = {
+        gemini_ask = "<leader>za",
+        toggle_gemini = "<leader>zt",
+        switch_focus = "<leader>zf",
+      },
     })
 <
 
 USAGE                                                        *gemini-usage*
 
-The plugin exposes a primary interactive function, `GeminiAsk`, which is the recommended way to use the plugin. It's best to map this to a keybinding.
+The plugin is primarily controlled via keymaps.
 
 KEYBINDINGS ~
 
-Since the most powerful feature is the interactive prompt, it's recommended to map the `GeminiAsk` function.
+The following keymaps are available and can be configured in the `keymaps` table of the `setup` function:
+
+-   `gemini_ask`: The primary interactive function. It is recommended to map this.
+-   `gemini_open`: Opens the Gemini terminal without any specific prompt. Disabled by default.
+-   `toggle_gemini`: Toggles the visibility of the Gemini terminal window.
+-   `switch_focus`: Switches focus to and from the Gemini terminal window.
+
+Here is an example of how to set the keymaps:
 
 >
     -- Set keymaps for asking Gemini questions
