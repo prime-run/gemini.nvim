@@ -151,11 +151,15 @@ function M.open(opts)
 
     if opts.cmd then
       -- Prompt user if a new command is provided
-      vim.ui.select({ "Discard", "Override", "Create New" }, { prompt = "A Gemini terminal is running. What to do?" }, function(choice)
+      local prompt = "A Gemini terminal is running. What to do?"
+      local options = { "Discard", "Override", "Create New" }
+      vim.ui.select(options, { prompt = prompt }, function(choice)
         if not choice or choice == "Discard" then
           return
         elseif choice == "Override" then
-          if winid ~= -1 then vim.api.nvim_win_close(winid, true) end
+          if winid ~= -1 then
+            vim.api.nvim_win_close(winid, true)
+          end
           vim.api.nvim_buf_delete(active_term.bufnr, { force = true })
           M.terms[active_term.bufnr] = nil
           _create_terminal(opts)
