@@ -7,8 +7,10 @@ A Neovim plugin for interacting with a `gemini` command-line tool, allowing you 
 -   **Seamless Integration**: Open a `gemini` CLI session in a floating or vertical split terminal without leaving Neovim.
 -   **Context-Aware**: Automatically pass the current file path or visual selection as context to your `gemini` commands.
 -   **Interactive Prompts**: Provides a `vim.ui.input`-based prompt to ask questions interactively.
--   **Customizable**: Configure the terminal width, command arguments, and window focus behavior.
--   **Singleton Terminal**: Manages a single terminal instance, with options to override, discard, or create new sessions.
+-   **Customizable**: Configure terminal appearance (width, position), command arguments, and window focus behavior.
+-   **Intelligent Focus**: Automatically enters insert mode when the terminal gains focus.
+-   **Seamless Control**: Manage the terminal with keymaps that work in both normal and insert mode, even from within the terminal itself.
+-   **Stateful Sessions**: Toggles terminal visibility without killing the process, and can manage multiple terminal instances.
 
 ## Requirements
 
@@ -96,8 +98,8 @@ The following keymaps are available and can be configured in the `keymaps` table
 
 -   `gemini_ask`: The primary interactive function. It is recommended to map this.
 -   `gemini_open`: Opens the Gemini terminal without any specific prompt. Disabled by default.
--   `toggle_gemini`: Toggles the visibility of the Gemini terminal window.
--   `switch_focus`: Switches focus to and from the Gemini terminal window.
+-   `toggle_gemini`: Toggles the visibility of the Gemini terminal window. Works in normal, insert, and terminal modes.
+-   `switch_focus`: Switches focus to and from the Gemini terminal window. Works in normal, insert, and terminal modes.
 
 Here is an example of how to set the keymaps:
 

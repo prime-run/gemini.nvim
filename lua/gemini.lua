@@ -5,20 +5,20 @@ local module = require("gemini.module")
 ---@field width number|string The percentage of the screen width the terminal should take (e.g., 25).
 ---@field cmd string|table|nil The command to execute upon opening.
 ---@class TerminalOpts
----@field width number The width of the terminal window.
+---@field width number The width of the terminal window. For vertical splits, this is the character width; for horizontal splits, it is the number of rows.
 ---@field position 'left'|'right'|'top'|'bottom' The position of the terminal window.
 
 ---@class KeymapOpts
----@field gemini_ask string|false Mapping for the interactive ask function.
----@field gemini_open string|false Mapping for the bare open function.
----@field toggle_gemini string|false Mapping for toggling the terminal window.
----@field switch_focus string|false Mapping for switching focus to the terminal.
+---@field gemini_ask string|false Mapping for the interactive ask function (`GeminiAsk`).
+---@field gemini_open string|false Mapping for the bare open function (`Gemini`).
+---@field toggle_gemini string|false Mapping for toggling the terminal window (`gemini.toggle`). Works in normal, insert, and terminal modes.
+---@field switch_focus string|false Mapping for switching focus to/from the terminal (`gemini.switch_focus`). Works in normal, insert, and terminal modes.
 
 ---@class Config
----@field cmd string|table|nil The command to execute upon opening.
+---@field cmd string|table|nil The command to execute upon opening. Can be a string or a table of strings (e.g., `{"gemini", "--verbose"}`).
 ---@field focus_back boolean Whether to focus back on the original window after opening the terminal.
 ---@field terminal TerminalOpts Styling options for the terminal window.
----@field keymaps KeymapOpts Mappings for plugin actions.
+---@field keymaps KeymapOpts Mappings for plugin actions. Set any key to `false` to disable it.
 local config = {
   cmd = nil,
   focus_back = true,
