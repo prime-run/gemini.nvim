@@ -1,105 +1,104 @@
 # gemini.nvim
 
-A powerful Neovim plugin to manage a persistent, context-aware terminal in a vertical split.
+A Neovim plugin for interacting with a `gemini` command-line tool, allowing you to ask questions and pass file context directly from the editor.
 
 ## Features
 
-- **Singleton Terminal**: The plugin manages a single terminal instance. Instead of creating duplicates, it intelligently focuses the existing terminal.
-- **Context-Aware Commands**: The `:GeminiAsk` command captures file and selection context to run commands with.
-- **Interactive Conflict Resolution**: If you send a new command while the terminal is busy, you are prompted to **Discard**, **Override**, or open a **New** terminal.
-- **Focus Management**: Automatically returns focus to your original window after opening the terminal (configurable).
-- **Customizable**: Configure terminal width, startup command, and focus behavior.
+-   **Seamless Integration**: Open a `gemini` CLI session in a floating or vertical split terminal without leaving Neovim.
+-   **Context-Aware**: Automatically pass the current file path or visual selection as context to your `gemini` commands.
+-   **Interactive Prompts**: Provides a `vim.ui.input`-based prompt to ask questions interactively.
+-   **Customizable**: Configure the terminal width, command arguments, and window focus behavior.
+-   **Singleton Terminal**: Manages a single terminal instance, with options to override, discard, or create new sessions.
+
+## Requirements
+
+-   Neovim 0.8.0+
+-   A `gemini` command-line tool installed and available in your system's `PATH`.
 
 ## Installation
 
-Install with your favorite plugin manager.
+Install the plugin using your favorite plugin manager.
 
-### [lazy.nvim](https://github.com/folke/lazy.nvim)
+### lazy.nvim
 
 ```lua
 {
   "prime/gemini.nvim",
-  opts = {
-    -- Your configuration goes here
-    width = 30,
-    focus_back = true,
-  },
+  config = function()
+    require("gemini").setup()
+  end,
+}
+```
+
+### packer.nvim
+
+```lua
+use {
+  "prime/gemini.nvim",
+  config = function()
+    require("gemini").setup()
+  end,
 }
 ```
 
 ## Configuration
 
-Configure the plugin by passing an `opts` table to `lazy.nvim` or by calling `require("gemini").setup()` manually.
+The plugin comes with the following default configuration, which you can override in the `setup` function.
 
-**Default Configuration:**
 ```lua
-{
-  width = 25,        -- Terminal width in percentage (1-99).
-  cmd = nil,         -- Default command to run on open.
-  focus_back = true, -- Focus back to original window after opening.
-}
+require("gemini").setup({
+  -- The percentage of the screen width the terminal should take (e.g., 25).
+  width = 25,
+  -- The command to execute upon opening. Can be a string or a table.
+  cmd = nil,
+  -- Whether to focus back on the original window after opening the terminal.
+  focus_back = true,
+})
 ```
 
-**Example Setup:**
+### Example Configuration
+
+Here is a more detailed example:
+
 ```lua
--- In your lazy.nvim spec:
-opts = {
+require("gemini").setup({
   width = 40,
+  cmd = { "gemini", "--arg1" },
   focus_back = false,
-  cmd = "btop",
-}
+})
 ```
 
 ## Usage
 
-The plugin provides two main user commands and a flexible Lua API.
+The plugin exposes a primary interactive function, `GeminiAsk`, which is the recommended way to use the plugin. It's best to map this to a keybinding.
 
-### :Gemini
+### Keybindings
 
-Opens the terminal with your configured settings. If a command is passed, it will be executed.
-
-`:Gemini [command]`
-
-- `[command]` (optional): The command to execute.
-
-**Examples:**
-- `:Gemini`: Opens a terminal with your configured command.
-- `:Gemini lazygit`: Opens a terminal and runs `lazygit`.
-
-### :GeminiAsk
-
-This is the plugin's most powerful feature. It prompts for your input, combines it with the current file context (including visual selections), and executes a `gemini -i "..."` command.
-
-**How it works:**
-1.  Run `:GeminiAsk` in normal mode or with a visual selection.
-2.  A prompt will appear asking for your input.
-3.  Your input is combined with the file path and selection range.
-4.  The result is executed in the terminal: `gemini -i "YOUR_INPUT @path/to/file L10-L20"`
-
-To use it, you must create a user command in your Neovim configuration:
+Since the most powerful feature is the interactive prompt, it's recommended to map the `GeminiAsk` function.
 
 ```lua
--- In your init.lua or a plugin configuration file
-vim.api.nvim_create_user_command('GeminiAsk', function()
-  require('gemini').GeminiAsk()
-end, { range = true, desc = 'Ask Gemini with context' })
+-- Set keymaps for asking Gemini questions
+local gemini = require("gemini")
+
+-- Normal mode: Ask a question about the current file
+vim.keymap.set("n", "<leader>ga", gemini.GeminiAsk, { desc = "Ask Gemini" })
+
+-- Visual mode: Ask a question about the selected text
+vim.keymap.set("v", "<leader>ga", function()
+    -- The `use_range` option is automatically detected in visual mode.
+    gemini.GeminiAsk()
+end, { desc = "Ask Gemini (Visual)" })
 ```
 
-### Lua Functions
+### Commands
 
-You can call the Lua functions directly for more control, which is ideal for keymaps.
+The plugin also provides a set of user commands for more direct control:
 
-`require("gemini").open({ width = 40, cmd = "ls -la" })`
-`require("gemini").GeminiAsk()`
+-   `:Gemini [width] [cmd]`: Opens the Gemini terminal. You can optionally override the configured width and command.
+    -   Example: `:Gemini 50 gemini --verbose`
+-   `:[range]GeminiAsk`: Echoes the context string for the current file or visual selection. Useful for debugging.
+-   `:[range]GeminiParse [text]`: Parses the context and prepends your `[text]` before printing it to the message area.
 
-**Example Keymaps:**
-```lua
--- Open the terminal with default settings
-vim.keymap.set("n", "<leader>t", function() require("gemini").open() end, { desc = "Open terminal" })
+## License
 
--- Open lazygit
-vim.keymap.set("n", "<leader>lg", function() require("gemini").open({ cmd = "lazygit" }) end, { desc = "Open lazygit" })
-
--- Use the interactive GeminiAsk command
-vim.keymap.set({"n", "v"}, "<leader>ga", function() require("gemini").GeminiAsk() end, { desc = "Ask Gemini" })
-```
+This plugin is licensed under the **MIT License**. See the [LICENSE](./LICENSE) file for more details.

@@ -1,10 +1,11 @@
 ---@class CustomModule
 local M = {}
 
+---@type number|nil
 M.term_bufnr = nil
 
 --- Creates and sets up a new terminal window.
----@param opts table The options table.
+---@param opts { width: number|string, cmd: string|table|nil } The options table.
 ---@return number The buffer number of the new terminal.
 local function _create_terminal(opts)
   -- 1. Get width
@@ -54,7 +55,7 @@ local function _create_terminal(opts)
 end
 
 --- Opens a terminal window, managing a single instance.
----@param opts table|nil Options table for the terminal.
+---@param opts { width?: number|string, cmd?: string|table|nil, focus_back?: boolean }|nil Options table for the terminal.
 function M.open(opts)
   opts = opts or {}
   local original_win = vim.api.nvim_get_current_win()

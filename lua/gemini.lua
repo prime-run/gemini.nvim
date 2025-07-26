@@ -17,20 +17,25 @@ local M = {}
 ---@type Config
 M.config = config
 
+--- Setup function for the plugin. Merges user-provided configuration.
 ---@param args Config?
--- Setup function for the plugin. Merges user-provided configuration.
 M.setup = function(args)
   M.config = vim.tbl_deep_extend("force", M.config, args or {})
 end
 
 -- This is the function that users will call.
 -- It merges the default config with any runtime options.
+---@param opts Config?
 M.open = function(opts)
   local merged_opts = vim.tbl_deep_extend("force", {}, M.config, opts or {})
   module.open(merged_opts)
 end
 
+---@alias GetContextOpts { use_range: boolean }
+
 -- Get the visual selection, or the whole file, and format it as a string.
+---@param opts GetContextOpts?
+---@return string?|nil, string? err
 M.get_context_string = function(opts)
   opts = opts or {}
   local use_range = opts.use_range
@@ -58,6 +63,7 @@ M.get_context_string = function(opts)
 end
 
 -- Echoes the context string.
+---@param opts GetContextOpts?
 M.ask = function(opts)
   local context_string, err = M.get_context_string(opts)
   if err then
@@ -68,6 +74,8 @@ M.ask = function(opts)
 end
 
 -- Parses the context string into a human-readable format.
+---@param context_string string?
+---@return string?|nil, string? err
 M.parse_context = function(context_string)
   if not context_string then
     return nil, "Invalid context string"
@@ -91,7 +99,10 @@ M.parse_context = function(context_string)
   return parsed_string
 end
 
+---@alias AskAndParseOpts { use_range: boolean, input: string }
+
 -- Gets the context, parses it, and echoes the result.
+---@param opts AskAndParseOpts?
 M.ask_and_parse = function(opts)
   opts = opts or {}
   local input_text = opts.input or ""
@@ -113,6 +124,7 @@ M.ask_and_parse = function(opts)
   print(final_string)
 end
 
+-- Asks the user for input and opens Gemini with the context.
 M.GeminiAsk = function()
   -- Automatically detect if a visual selection was made.
   local start_line = vim.fn.line("'<")

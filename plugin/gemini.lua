@@ -1,4 +1,14 @@
+---@class CommandOpts
+---@field fargs string[] The command arguments as a list of strings.
+---@field range number The number of items in the range.
+---@field bang boolean Whether the command was executed with a !.
+---@field line1 number The starting line of the range.
+---@field line2 number The ending line of the range.
+---@field name string The name of the command.
+
 vim.api.nvim_create_user_command("Gemini", function(cmd_opts)
+  ---@param cmd_opts CommandOpts
+  ---@type { width?: number|string, cmd?: string|table }
   local opts = {}
   local fargs = cmd_opts.fargs or {}
 
@@ -19,6 +29,7 @@ vim.api.nvim_create_user_command("Gemini", function(cmd_opts)
 end, { nargs = "*", complete = "file" })
 
 vim.api.nvim_create_user_command("GeminiAsk", function(cmd_opts)
+  ---@param cmd_opts CommandOpts
   -- A range is present if the user selected something visually,
   -- or if they provided an explicit range like :% or :1,5
   local use_range = cmd_opts.range > 0
@@ -26,10 +37,15 @@ vim.api.nvim_create_user_command("GeminiAsk", function(cmd_opts)
 end, { nargs = 0, range = true, bang = true })
 
 vim.api.nvim_create_user_command("GeminiParse", function(cmd_opts)
+  ---@param cmd_opts CommandOpts
   local use_range = cmd_opts.range > 0
   local input_text = cmd_opts.fargs and table.concat(cmd_opts.fargs, " ") or ""
   local final_input = input_text == "" and "" or (input_text .. " ")
 
   require("gemini").ask_and_parse({ use_range = use_range, input = final_input })
 end, { nargs = "*", range = true, bang = true })
+
+
+
+-- vim: ts=2 sts=2 sw=2 et
 
