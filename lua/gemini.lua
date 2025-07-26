@@ -44,15 +44,45 @@ function M.GeminiAsk()
       return
     end
 
-    local parsed_string, parse_err = context.parse_context(context_string)
-    if parse_err then
-      vim.notify(parse_err, vim.log.levels.ERROR)
+    local formatted_string, format_err = context.format_context(context_string)
+    if format_err then
+      vim.notify(format_err, vim.log.levels.ERROR)
       return
     end
 
-    local final_string = input .. " " .. parsed_string
+    local final_string = input .. " " .. formatted_string
     M.open({ cmd = { "gemini", "-i", final_string } })
   end)
+end
+
+local function ask(opts)
+  local context_string, err = context.get_context_string(opts)
+  if err then
+    vim.notify(err, vim.log.levels.WARN)
+    return
+  end
+  vim.api.nvim_echo({ { context_string, "Normal" } }, false, {})
+end
+
+local function ask_and_parse(opts)
+  opts = opts or {}
+  local input_text = opts.input or ""
+
+  local context_string, err = context.get_context_string(opts)
+  if err then
+    vim.notify(err, vim.log.levels.WARN)
+    return
+  end
+
+  local formatted_string, format_err = context.format_context(context_string)
+  if format_err then
+    vim.notify(format_err, vim.log.levels.ERROR)
+    return
+  end
+
+  local final_string = input_text .. formatted_string
+  -- Use print() to add a newline, as requested.
+  print(final_string)
 end
 
 vim.api.nvim_create_user_command("Gemini", function(cmd_opts)
@@ -74,7 +104,7 @@ vim.api.nvim_create_user_command("Gemini", function(cmd_opts)
   end
 
   -- Require the main module and call the open function
-  require("gemini").open(opts)
+  M.open(opts)
 end, { nargs = "*", complete = "file" })
 
 vim.api.nvim_create_user_command("GeminiAsk", function(cmd_opts)
@@ -82,7 +112,7 @@ vim.api.nvim_create_user_command("GeminiAsk", function(cmd_opts)
   -- A range is present if the user selected something visually,
   -- or if they provided an explicit range like :% or :1,5
   local use_range = cmd_opts.range > 0
-  require("gemini").ask({ use_range = use_range })
+  ask({ use_range = use_range })
 end, { nargs = 0, range = true, bang = true })
 
 vim.api.nvim_create_user_command("GeminiParse", function(cmd_opts)
@@ -91,7 +121,7 @@ vim.api.nvim_create_user_command("GeminiParse", function(cmd_opts)
   local input_text = cmd_opts.fargs and table.concat(cmd_opts.fargs, " ") or ""
   local final_input = input_text == "" and "" or (input_text .. " ")
 
-  require("gemini").ask_and_parse({ use_range = use_range, input = final_input })
+  ask_and_parse({ use_range = use_range, input = final_input })
 end, { nargs = "*", range = true, bang = true })
 
 return M

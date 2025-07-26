@@ -108,14 +108,20 @@ local function _create_terminal(opts)
   local keymaps = config.get().keymaps
   if keymaps then
     if keymaps.toggle_gemini then
-      vim.keymap.set("t", keymaps.toggle_gemini, function()
-        require("gemini.core.terminal").toggle()
-      end, { noremap = true, silent = true, buffer = bufnr, desc = "Toggle Gemini terminal" })
+      vim.keymap.set(
+        "t",
+        keymaps.toggle_gemini,
+        M.toggle,
+        { noremap = true, silent = true, buffer = bufnr, desc = "Toggle Gemini terminal" }
+      )
     end
     if keymaps.switch_focus then
-      vim.keymap.set("t", keymaps.switch_focus, function()
-        require("gemini.core.terminal").switch_focus()
-      end, { noremap = true, silent = true, buffer = bufnr, desc = "Switch focus to Gemini" })
+      vim.keymap.set(
+        "t",
+        keymaps.switch_focus,
+        M.switch_focus,
+        { noremap = true, silent = true, buffer = bufnr, desc = "Switch focus to Gemini" }
+      )
     end
   end
 

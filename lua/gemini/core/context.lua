@@ -19,10 +19,12 @@ function M.get_context_string(opts)
   local selection_range = ""
 
   if use_range then
-    local start_line = vim.fn.line("'<")
-    local start_col = vim.fn.col("'<")
-    local end_line = vim.fn.line("'>")
-    local end_col = vim.fn.col("'>")
+    local pos1 = vim.fn.getpos("'<")
+    local pos2 = vim.fn.getpos("'>")
+    local start_line = pos1[2]
+    local start_col = pos1[3]
+    local end_line = pos2[2]
+    local end_col = pos2[3]
 
     if start_line ~= 0 and end_line ~= 0 then
       selection_range = string.format(" L%dC%d-L%dC%d", start_line, start_col, end_line, end_col)
@@ -32,16 +34,16 @@ function M.get_context_string(opts)
   return string.format("@%s%s", context_path, selection_range)
 end
 
--- Parses the context string into a human-readable format.
+-- Formats the context string into a GitHub-style address.
 ---@param context_string string?
 ---@return string?|nil, string? err
-function M.parse_context(context_string)
+function M.format_context(context_string)
   if not context_string then
     return nil, "Invalid context string"
   end
 
   local file_match = context_string:match("@([^ ]+)")
-  local range_match = context_string:match("(L%d+C%d+-L%d+C%d+)")
+  local range_match = context_string:match("L(%d+)C(%d+)-L(%d+)C(%d+)")
 
   if not file_match then
     return nil, "Could not parse file path"
@@ -51,8 +53,8 @@ function M.parse_context(context_string)
   local parsed_string = "@" .. file_name
 
   if range_match then
-    local sL, sC, eL, eC = range_match:match("L(%d+)C(%d+)-L(%d+)C(%d+)")
-    parsed_string = string.format("from line %s column %s to line %s column %s %s", sL, sC, eL, eC, parsed_string)
+    local sL, sC, eL, eC = context_string:match("L(%d+)C(%d+)-L(%d+)C(%d+)")
+    parsed_string = string.format("%s:%s:%s-%s:%s", parsed_string, sL, sC, eL, eC)
   end
 
   return parsed_string
