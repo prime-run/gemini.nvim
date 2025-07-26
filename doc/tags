@@ -1,5 +1,9 @@
-my-template-docs-a-neovim-plugin-template	my-template-docs.txt	/*my-template-docs-a-neovim-plugin-template*
-my-template-docs-a-neovim-plugin-template-using-it	my-template-docs.txt	/*my-template-docs-a-neovim-plugin-template-using-it*
-my-template-docs-links	my-template-docs.txt	/*my-template-docs-links*
-my-template-docs-table-of-contents	my-template-docs.txt	/*my-template-docs-table-of-contents*
-my-template-docs.txt	my-template-docs.txt	/*my-template-docs.txt*
+gemini-gemini.nvim	gemini.txt	/*gemini-gemini.nvim*
+gemini-gemini.nvim-configuration	gemini.txt	/*gemini-gemini.nvim-configuration*
+gemini-gemini.nvim-features	gemini.txt	/*gemini-gemini.nvim-features*
+gemini-gemini.nvim-installation	gemini.txt	/*gemini-gemini.nvim-installation*
+gemini-gemini.nvim-license	gemini.txt	/*gemini-gemini.nvim-license*
+gemini-gemini.nvim-requirements	gemini.txt	/*gemini-gemini.nvim-requirements*
+gemini-gemini.nvim-usage	gemini.txt	/*gemini-gemini.nvim-usage*
+gemini-table-of-contents	gemini.txt	/*gemini-table-of-contents*
+gemini.txt	gemini.txt	/*gemini.txt*

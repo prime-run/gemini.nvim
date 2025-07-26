@@ -1,21 +1,23 @@
 local gemini = require("gemini")
+local config = require("gemini.core.config")
 
 describe("gemini.nvim", function()
   -- Make sure to reset the configuration before each test
   before_each(function()
     -- Reset the require cache to get a fresh module instance
     package.loaded["gemini"] = nil
-    package.loaded["gemini.module"] = nil
+    package.loaded["gemini.core.config"] = nil
     gemini = require("gemini")
+    config = require("gemini.core.config")
   end)
 
   describe("setup()", function()
     it("should use default config values", function()
       gemini.setup()
-      local config = gemini.get_config() -- We may need to expose config for testing
-      assert.are.same("right", config.terminal.position)
-      assert.are.same(30, config.terminal.width)
-      assert.are.same("<leader>ga", config.keymaps.gemini_ask)
+      local c = config.get()
+      assert.are.same("right", c.terminal.position)
+      assert.are.same(30, c.terminal.width)
+      assert.are.same("<leader>ga", c.keymaps.gemini_ask)
     end)
 
     it("should merge user config with defaults", function()
@@ -28,11 +30,11 @@ describe("gemini.nvim", function()
           gemini_ask = "<leader>xx",
         },
       })
-      local config = gemini.get_config()
-      assert.are.same("left", config.terminal.position)
-      assert.are.same(50, config.terminal.width)
-      assert.are.same("<leader>xx", config.keymaps.gemini_ask)
-      assert.are.same(true, config.focus_back) -- Should still have other defaults
+      local c = config.get()
+      assert.are.same("left", c.terminal.position)
+      assert.are.same(50, c.terminal.width)
+      assert.are.same("<leader>xx", c.keymaps.gemini_ask)
+      assert.are.same(true, c.focus_back) -- Should still have other defaults
     end)
   end)
 end)

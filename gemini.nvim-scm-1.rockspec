@@ -20,13 +20,19 @@ build = {
   type = "builtin",
   modules = {
     ["gemini"] = "lua/gemini.lua",
-    ["gemini.module"] = "lua/gemini/module.lua",
+    ["gemini.core.config"] = "lua/gemini/core/config.lua",
+    ["gemini.core.terminal"] = "lua/gemini/core/terminal.lua",
+    ["gemini.core.context"] = "lua/gemini/core/context.lua",
+    ["gemini.core.keymaps"] = "lua/gemini/core/keymaps.lua",
   },
   install = {
     lua = {
       ["gemini"] = "lua/gemini.lua",
-      ["gemini.module"] = "lua/gemini/module.lua",
+      ["gemini.core.config"] = "lua/gemini/core/config.lua",
+      ["gemini.core.terminal"] = "lua/gemini/core/terminal.lua",
+      ["gemini.core.context"] = "lua/gemini/core/context.lua",
+      ["gemini.core.keymaps"] = "lua/gemini/core/keymaps.lua",
     },
   },
-  copy_directories = { "doc" },
+  copy_directories = { "doc", "plugin" },
 }

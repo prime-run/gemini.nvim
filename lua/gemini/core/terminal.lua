@@ -1,3 +1,5 @@
+local config = require("gemini.core.config")
+
 ---@class CustomModule
 local M = {}
 
@@ -5,7 +7,6 @@ local M = {}
 ---@field bufnr number The buffer number of the terminal.
 ---@field winid number The window ID of the terminal.
 ---@field opts table The options used to create the terminal.
-
 ---@type table<number, TerminalState>
 M.terms = {}
 
@@ -104,15 +105,16 @@ local function _create_terminal(opts)
   })
 
   -- Set terminal-mode keymaps
-  if opts.keymaps then
-    if opts.keymaps.toggle_gemini then
-      vim.keymap.set("t", opts.keymaps.toggle_gemini, function()
-        require("gemini.module").toggle()
+  local keymaps = config.get().keymaps
+  if keymaps then
+    if keymaps.toggle_gemini then
+      vim.keymap.set("t", keymaps.toggle_gemini, function()
+        require("gemini.core.terminal").toggle()
       end, { noremap = true, silent = true, buffer = bufnr, desc = "Toggle Gemini terminal" })
     end
-    if opts.keymaps.switch_focus then
-      vim.keymap.set("t", opts.keymaps.switch_focus, function()
-        require("gemini.module").switch_focus()
+    if keymaps.switch_focus then
+      vim.keymap.set("t", keymaps.switch_focus, function()
+        require("gemini.core.terminal").switch_focus()
       end, { noremap = true, silent = true, buffer = bufnr, desc = "Switch focus to Gemini" })
     end
   end
