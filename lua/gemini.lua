@@ -190,4 +190,10 @@ M.GeminiAsk = function()
   end)
 end
 
+--- Returns the current configuration table.
+---@return Config The current configuration.
+function M.get_config()
+  return M.config
+end
+
 return M
