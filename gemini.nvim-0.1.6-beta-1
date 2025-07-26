@@ -1,5 +1,5 @@
 package = "gemini.nvim"
-version = "scm-1"
+version = "0.1.6-beta"
 
 source = {
   url = "git://github.com/prime/gemini.nvim",
