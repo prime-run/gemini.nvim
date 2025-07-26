@@ -45,7 +45,4 @@ vim.api.nvim_create_user_command("GeminiParse", function(cmd_opts)
   require("gemini").ask_and_parse({ use_range = use_range, input = final_input })
 end, { nargs = "*", range = true, bang = true })
 
-
-
 -- vim: ts=2 sts=2 sw=2 et
-

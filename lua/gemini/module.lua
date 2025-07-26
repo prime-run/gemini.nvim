@@ -133,7 +133,6 @@ local function _create_terminal(opts)
   return term_state
 end
 
-
 function M.open(opts)
   opts = opts or {}
   local original_win = vim.api.nvim_get_current_win()
@@ -227,7 +226,9 @@ function M.toggle()
         table.insert(opts, string.format("%d: %s", i, vim.api.nvim_buf_get_name(term.bufnr)))
       end
       vim.ui.select(opts, { prompt = "Select a Gemini buffer to show:" }, function(choice)
-        if not choice then return end
+        if not choice then
+          return
+        end
         local idx = tonumber(choice:match("^%d+"))
         if idx and hidden_terms[idx] then
           _show_terminal(hidden_terms[idx].bufnr, hidden_terms[idx].opts)
@@ -266,9 +267,3 @@ function M.switch_focus()
 end
 
 return M
-
-
-
-
-
-

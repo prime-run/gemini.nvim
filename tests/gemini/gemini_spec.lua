@@ -1,4 +1,4 @@
-local gemini = require "gemini"
+local gemini = require("gemini")
 
 describe("gemini.nvim", function()
   -- Make sure to reset the configuration before each test
@@ -6,7 +6,7 @@ describe("gemini.nvim", function()
     -- Reset the require cache to get a fresh module instance
     package.loaded["gemini"] = nil
     package.loaded["gemini.module"] = nil
-    gemini = require "gemini"
+    gemini = require("gemini")
   end)
 
   describe("setup()", function()
@@ -19,7 +19,7 @@ describe("gemini.nvim", function()
     end)
 
     it("should merge user config with defaults", function()
-      gemini.setup {
+      gemini.setup({
         terminal = {
           width = 50,
           position = "left",
@@ -27,7 +27,7 @@ describe("gemini.nvim", function()
         keymaps = {
           gemini_ask = "<leader>xx",
         },
-      }
+      })
       local config = gemini.get_config()
       assert.are.same("left", config.terminal.position)
       assert.are.same(50, config.terminal.width)
